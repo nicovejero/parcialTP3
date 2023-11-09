@@ -5,6 +5,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.Relation
+import com.kubernights.tp3.parcialnw.domain.model.Dog
 
 @Entity(tableName = "breeds")
 data class BreedEntity(
@@ -27,4 +28,3 @@ data class BreedWithSubBreeds(
     )
     val subBreeds: List<SubBreedEntity>
 )
-

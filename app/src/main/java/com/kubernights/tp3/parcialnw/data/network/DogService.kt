@@ -19,6 +19,24 @@ class DogService @Inject constructor(
         }
     }
 */
+
+    suspend fun getAllDogs(): List<DogModel> = withContext(Dispatchers.IO) {
+        val dogs = mutableListOf<DogModel>()
+        firestore.collection("pets")
+            .get()
+            .addOnSuccessListener { result ->
+                for (document in result) {
+                    Log.d("Firestore", "${document.id} => ${document.data}")
+                    val dog = document.toObject(DogModel::class.java)
+                    dogs.add(dog)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Error getting documents.", exception)
+            }
+        dogs
+    }
+
     suspend fun addDogToFirestore(petModel: DogModel, userId: String?) = withContext(Dispatchers.IO) {
         if (userId == null) {
             throw IllegalArgumentException("User ID must not be null when adding a pet")

@@ -1,6 +1,7 @@
 package com.kubernights.tp3.parcialnw.ui.view
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class HomeFragment : Fragment() {
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
+    private lateinit var binding: FragmentHomeBinding
     private lateinit var petAdapter: PetAdoptableAdapter
     private lateinit var filterAdapter: FilterChipAdapter
     private val viewModel: HomeViewModel by viewModels()
@@ -25,27 +25,36 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        viewModel.onCreate()
         setupRecyclerViews()
         setupObservers()
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.loadDogs(false)
+    }
     private fun setupRecyclerViews() {
-        petAdapter = PetAdoptableAdapter(emptyList()) // Assuming now it takes a list
+        petAdapter = PetAdoptableAdapter(mutableListOf())
         binding.cardsRecyclerView.adapter = petAdapter
         binding.cardsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         filterAdapter = FilterChipAdapter(emptyList()) { breed ->
             viewModel.searchDogsByBreed(breed)
         }
+
         binding.chipsRecyclerView.adapter = filterAdapter
         binding.chipsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
     }
 
     private fun setupObservers() {
-        viewModel.dogs.observe(viewLifecycleOwner) { dogs ->
-            petAdapter.updateData(dogs) // Assuming your adapter has an updateData method
+
+        viewModel.dogModel.observe(viewLifecycleOwner) { dogs ->
+            // Log to check if this is being called and what the data looks like
+            Log.d("HomeFragment", "Dogs data received: $dogs")
+            petAdapter.updateData(dogs)
         }
 
         // This assumes that breeds are still fetched from a separate source
@@ -61,8 +70,4 @@ class HomeFragment : Fragment() {
 
     // Rest of the lifecycle methods like onStart and onStop are not needed if you're not using Firestore adapter anymore
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }

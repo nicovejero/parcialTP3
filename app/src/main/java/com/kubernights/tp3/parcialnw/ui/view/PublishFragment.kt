@@ -1,7 +1,5 @@
 package com.kubernights.tp3.parcialnw.ui.view
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
@@ -19,9 +16,8 @@ import com.kubernights.tp3.parcialnw.R
 import com.kubernights.tp3.parcialnw.data.database.entities.BreedWithSubBreeds
 import com.kubernights.tp3.parcialnw.data.database.entities.SubBreedEntity
 import com.kubernights.tp3.parcialnw.ui.viewmodel.PublishViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import com.kubernights.tp3.parcialnw.data.model.DogModel
 import com.kubernights.tp3.parcialnw.databinding.FragmentPublishBinding
+import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class PublishFragment : Fragment() {
@@ -35,7 +31,6 @@ class PublishFragment : Fragment() {
 
     companion object {
         fun newInstance() = PublishFragment()
-        private const val PICK_IMAGE_REQUEST = 1
     }
 
     override fun onCreateView(
@@ -171,21 +166,13 @@ class PublishFragment : Fragment() {
         }
     }
 
-    private fun setupBreedAutoComplete(breeds: List<String>) {
-        val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, breeds)
-        binding.breedAutoComplete.setAdapter(adapter)
-        binding.breedAutoComplete.setOnItemClickListener { parent, view, position, id ->
-            // Handle the selection event if necessary
-        }
-    }
-
     private fun attemptToGeneratePetInfo() {
         val petName = binding.eTNombrePet.text.toString().trim()
         val petBreed = binding.breedAutoComplete.text.toString().trim()
         val petSubBreed = binding.subBreedAutoComplete.text.toString().trim()
         val petLocation = binding.locationsSpinner.text.toString().trim()
         val petAge = binding.ageSpinner.text.toString().trim() // Make sure to pass this as a string
-        val petGender = binding.genderSwitch.isChecked
+        val petGender = if (binding.genderSwitch.isChecked) "Macho" else "Hembra"
         val petDescription = binding.publicacionDescriptionInput.text.toString()
 
         viewModel.createDog(

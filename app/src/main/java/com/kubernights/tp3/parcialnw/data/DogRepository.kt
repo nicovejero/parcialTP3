@@ -13,69 +13,38 @@ class DogRepository @Inject constructor(
     private val remote: DogService,
     private val sessionManager: SessionManagerInterface
 ) {
-    suspend fun getAllDogs(): List<Dog> {
-        return dogDao.getAllDogs().map { entity ->
-            Dog(
-                id = entity.id,
-                ownerId = entity.ownerId,
-                petName = entity.petName,
-                petBreed = entity.petBreed,
-                petSubBreed = entity.petSubBreed,
-                petLocation = entity.petLocation,
-                petAge = entity.petAge,
-                petGender = entity.petGender,
-                petIsAdopted = entity.petIsAdopted,
-                imageUrls = entity.imageUrls,
-                creationDate = entity.creationDate,
-                description = entity.description
-            )
+
+    suspend fun getAllDogsFromFirebase(): List<Dog> {
+        val response: List<DogModel> = remote.getAllDogs()
+        return response.toList().map { it.toDomain() }
+    }
+
+    suspend fun getAllDogsFromDatabase():List<Dog>{
+        val response: List<DogEntity> = dogDao.getAllDogs()
+        return response.map { it.toDomainModel() }
+    }
+
+    /*
+        // If remote fetch is successful and returns dogs
+        if (remoteDogs.isNotEmpty()) {
+            // Convert to domain model
+            val domainDogs = remoteDogs.map { it.toDomainModel() }
+            // Insert fetched dogs into the database, replacing the old cache
+            dogDao.deleteAllDogs()
+            insertAllDogs(domainDogs)
+            // Return the newly updated data from the remote
+            return domainDogs
+        } else {
+            // If remote fetch fails or is empty, fall back to the local cache
+            return dogDao.getAllDogs().map { it.toDomainModel() }
         }
     }
-/*
-    suspend fun addDog(dog: Dog) {
-        dogDao.insertDog(
-            DogEntity(
-                id = dog.id,
-                ownerId = dog.ownerId,
-                petName = dog.petName,
-                petBreed = dog.petBreed,
-                petSubBreed = dog.petSubBreed,
-                petLocation = dog.petLocation,
-                petAge = dog.petAge,
-                petGender = dog.petGender,
-                petIsAdopted = dog.petIsAdopted,
-                imageUrls = dog.imageUrls,
-                creationDate = dog.creationDate,
-                description = dog.description
-            )
-        )
-    }
 */
+
     suspend fun addDogToFirestore(dog: Dog) {
         val userId = sessionManager.currentUserId
-
-
         val dogModel = dog.toDataModel()
-
-        // Now, call the remote service to add the dog to Firestore
         remote.addDogToFirestore(dogModel, userId)
-    }
-
-    private fun Dog.toDataModel(): DogModel {
-        return DogModel(
-            petId = this.id,
-            petOwner = this.ownerId,
-            petName = this.petName,
-            petBreed = this.petBreed,
-            petSubBreed = this.petSubBreed,
-            petLocation = this.petLocation,
-            petAge = this.petAge,
-            petGender = this.petGender,
-            petAdopted = this.petIsAdopted,
-            urlImage = this.imageUrls,
-            petDescripcion = this.description,
-            creationTimestamp = this.creationDate
-        )
     }
 
     suspend fun getDogsByBreed(breed: String): List<Dog> {
@@ -98,24 +67,8 @@ class DogRepository @Inject constructor(
         return dogDao.getDogsByAge(age).map { it.toDomainModel() }
     }
 
-    suspend fun insertAllDogs(dogs: List<Dog>) {
-        val dogEntities = dogs.map { dog ->
-            DogEntity(
-                id = dog.id,
-                ownerId = dog.ownerId,
-                petName = dog.petName,
-                petBreed = dog.petBreed,
-                petSubBreed = dog.petSubBreed,
-                petLocation = dog.petLocation,
-                petAge = dog.petAge,
-                petGender = dog.petGender,
-                petIsAdopted = dog.petIsAdopted,
-                imageUrls = dog.imageUrls,
-                creationDate = dog.creationDate,
-                description = dog.description
-            )
-        }
-        dogDao.insertAllDogs(dogEntities)
+    suspend fun insertAllDogs(dogs: List<DogEntity>) {
+        dogDao.insertAllDogs(dogs)
     }
 
     suspend fun deleteAllDogs() {
@@ -136,6 +89,23 @@ class DogRepository @Inject constructor(
             imageUrls = this.imageUrls,
             creationDate = this.creationDate,
             description = this.description
+        )
+    }
+
+    private fun Dog.toDataModel(): DogModel {
+        return DogModel(
+            petId = this.id,
+            petOwner = this.ownerId,
+            petName = this.petName,
+            petBreed = this.petBreed,
+            petSubBreed = this.petSubBreed,
+            petLocation = this.petLocation,
+            petAge = this.petAge,
+            petGender = this.petGender,
+            petAdopted = this.petIsAdopted,
+            urlImage = this.imageUrls,
+            petDescripcion = this.description,
+            creationTimestamp = this.creationDate
         )
     }
 }

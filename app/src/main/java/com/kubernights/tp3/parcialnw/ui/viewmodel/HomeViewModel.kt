@@ -3,6 +3,7 @@ package com.kubernights.tp3.parcialnw.ui.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.kubernights.tp3.parcialnw.domain.model.Dog
 import com.kubernights.tp3.parcialnw.domain.usecase.*
@@ -18,11 +19,9 @@ class HomeViewModel @Inject constructor(
     private val getDogsByLocationUseCase: GetDogsByLocationUseCase,
     private val getDogsByGenderUseCase: GetDogsByGenderUseCase,
     private val getDogsByAgeUseCase: GetDogsByAgeUseCase
-    // Add other use cases if necessary
 ) : ViewModel() {
-
-    private val _dogs = MutableLiveData<List<Dog>>()
-    val dogs: LiveData<List<Dog>> = _dogs
+    val isLoading = MutableLiveData<Boolean>()
+    val dogModel = MutableLiveData<List<Dog>>()
 
     // Assuming there's a use case to get breeds, uncomment and inject if available
     // private val _breeds = MutableLiveData<List<String>>()
@@ -33,39 +32,53 @@ class HomeViewModel @Inject constructor(
         //loadBreeds()
     }
 
+    fun onCreate(){
+        viewModelScope.launch {
+            isLoading.postValue(true)
+            val result = getAllDogsUseCase()
+            if (!result.isNullOrEmpty()) {
+                dogModel.postValue(result)
+                isLoading.postValue(false)
+            }
+        }
+    }
+
     fun loadDogs(isAdopted: Boolean) {
         viewModelScope.launch {
+            isLoading.postValue(true)
             val result = getAllDogsUseCase()
-            // Assuming you only want to display not adopted dogs if isAdopted is false
-            _dogs.value = if (isAdopted) result else result.filter { !it.petIsAdopted }
+            dogModel.let{
+                dogModel.value = result
+            }
+            isLoading.postValue(false)
         }
     }
 
     fun searchDogsByBreed(breed: String) {
         viewModelScope.launch {
             val result = getDogsByBreedUseCase(breed)
-            _dogs.value = result
+            dogModel.value = result
         }
     }
 
     fun searchDogsByLocation(location: String) {
         viewModelScope.launch {
             val result = getDogsByLocationUseCase(location)
-            _dogs.value = result
+            dogModel.value = result
         }
     }
 
     fun searchDogsByAge(age: Int) {
         viewModelScope.launch {
             val result = getDogsByAgeUseCase(age)
-            _dogs.value = result
+            dogModel.value = result
         }
     }
 
     fun searchDogsByGender(gender: Boolean) {
         viewModelScope.launch {
             val result = getDogsByGenderUseCase(gender)
-            _dogs.value = result
+            dogModel.value = result
         }
     }
 

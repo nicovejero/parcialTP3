@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.kubernights.tp3.parcialnw.databinding.ItemFragmentMascotaBinding
 import com.kubernights.tp3.parcialnw.domain.model.Dog
 
-class PetAdoptableAdapter(private var dogs: List<Dog>) : RecyclerView.Adapter<PetAdoptableAdapter.ViewHolder>() {
+class PetAdoptableAdapter(private var dogs: MutableList<Dog>) : RecyclerView.Adapter<PetAdoptableAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = ItemFragmentMascotaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -20,9 +20,10 @@ class PetAdoptableAdapter(private var dogs: List<Dog>) : RecyclerView.Adapter<Pe
 
     override fun getItemCount(): Int = dogs.size
 
-    fun updateData(newDogs: List<Dog>) {
-        this.dogs = newDogs
-        notifyDataSetChanged()
+    fun updateData(newData: List<Dog>) {
+        this.dogs.clear()
+        this.dogs.addAll(newData)
+        notifyDataSetChanged() // This notifies the adapter to refresh the view
     }
 
     class ViewHolder(private val binding: ItemFragmentMascotaBinding) : RecyclerView.ViewHolder(binding.root) {

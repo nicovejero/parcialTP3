@@ -2,6 +2,7 @@ package com.kubernights.tp3.parcialnw.data.model
 
 import android.os.Parcel
 import android.os.Parcelable
+import com.kubernights.tp3.parcialnw.domain.model.Dog
 
 data class DogModel(
     var petId: String = "",
@@ -11,7 +12,7 @@ data class DogModel(
     val urlImage: List<String> = emptyList(),
     val petAge: Int = 0,
     val petWeight: Double = 0.0,
-    val petGender: Boolean = false,
+    val petGender: String = "",
     var petOwner: String = "",
     var petLocation: String = "",
     val petAdopted: Boolean = false,
@@ -26,7 +27,7 @@ data class DogModel(
         mutableListOf<String>().apply { parcel.readStringList(this) },
         parcel.readInt(),
         parcel.readDouble(),
-        parcel.readByte() != 0.toByte(),
+        parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readByte() != 0.toByte(),
@@ -42,7 +43,7 @@ data class DogModel(
         writeStringList(urlImage)
         writeInt(petAge)
         writeDouble(petWeight)
-        writeByte(if (petGender) 1 else 0)
+        writeString(petGender)
         writeString(petOwner)
         writeString(petLocation)
         writeByte(if (petAdopted) 1 else 0)
@@ -70,6 +71,24 @@ data class DogModel(
 
     override fun describeContents(): Int {
         return 0
+    }
+
+    fun toDomain(): Dog {
+        // Map the remote model to your domain model
+        return Dog(
+            id = this.petId,
+            ownerId = this.petOwner,
+            petName = this.petName,
+            petBreed = this.petBreed,
+            petSubBreed = this.petSubBreed,
+            petLocation = this.petLocation,
+            petAge = this.petAge,
+            petGender = this.petGender,
+            petIsAdopted = this.petAdopted,
+            imageUrls = this.urlImage,
+            creationDate = this.creationTimestamp,
+            description = this.petDescripcion
+        )
     }
 
     companion object {
