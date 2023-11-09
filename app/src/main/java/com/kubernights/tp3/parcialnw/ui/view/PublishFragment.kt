@@ -172,6 +172,7 @@ class PublishFragment : Fragment() {
         val petSubBreed = binding.subBreedAutoComplete.text.toString().trim()
         val petLocation = binding.locationsSpinner.text.toString().trim()
         val petAge = binding.ageSpinner.text.toString().trim() // Make sure to pass this as a string
+        val petWeight = 0.0
         val petGender = if (binding.genderSwitch.isChecked) "Macho" else "Hembra"
         val petDescription = binding.publicacionDescriptionInput.text.toString()
 
@@ -181,6 +182,7 @@ class PublishFragment : Fragment() {
             petSubBreed,
             petLocation,
             petAge,
+            petWeight,
             petGender,
             petDescription
         ) { isSuccess ->

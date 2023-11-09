@@ -17,6 +17,7 @@ data class DogEntity(
     @ColumnInfo(name = "pet_sub_breed") val petSubBreed: String,
     @ColumnInfo(name = "pet_location") val petLocation: String,
     @ColumnInfo(name = "pet_age") val petAge: Int,
+    @ColumnInfo(name = "pet_weight") val petWeight: Double,
     @ColumnInfo(name = "pet_gender") val petGender: String,
     @ColumnInfo(name = "pet_adopted") val petIsAdopted: Boolean,
     @ColumnInfo(name = "url_image") val imageUrls: List<String>,
@@ -36,5 +37,6 @@ fun Dog.toDatabase() = DogEntity(
     petIsAdopted = petIsAdopted,
     imageUrls = imageUrls,
     creationDate = creationDate,
-    description = description
+    description = description,
+    petWeight = petWeight
 )

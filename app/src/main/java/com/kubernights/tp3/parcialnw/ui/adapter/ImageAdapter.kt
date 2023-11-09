@@ -1,4 +1,4 @@
-package com.kubernights.tp3.parcialnw.ui.holder
+package com.kubernights.tp3.parcialnw.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

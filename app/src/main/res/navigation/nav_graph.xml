@@ -20,7 +20,7 @@
 
     <action
         android:id="@+id/action_global_to_PetInAdoptionDetailFragment"
-        app:destination="@id/petInAdoptionDetailFragment" />
+        app:destination="@id/pet_detail_fragment" />
     <!-- Fragmentos para Drawer Menu -->
     <fragment
         android:id="@+id/nav_drawer_perfil"
@@ -50,7 +50,7 @@
         android:name="com.kubernights.tp3.parcialnw.ui.view.PublishFragment"
         android:label="Publicación" />
     <fragment
-        android:id="@+id/petInAdoptionDetailFragment"
+        android:id="@+id/pet_detail_fragment"
         android:name="com.kubernights.tp3.parcialnw.ui.view.PetDetailFragment"
         android:label="Detalle"
         tools:layout="@layout/fragment_pet_detail">

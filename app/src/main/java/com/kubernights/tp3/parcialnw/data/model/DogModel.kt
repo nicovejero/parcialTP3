@@ -83,6 +83,7 @@ data class DogModel(
             petSubBreed = this.petSubBreed,
             petLocation = this.petLocation,
             petAge = this.petAge,
+            petWeight = this.petWeight,
             petGender = this.petGender,
             petIsAdopted = this.petAdopted,
             imageUrls = this.urlImage,

@@ -15,6 +15,9 @@ interface DogDao {
     @Query("SELECT * FROM dogs_in_adoption")
     suspend fun getAllDogs(): List<DogEntity>
 
+    @Query("SELECT * FROM dogs_in_adoption WHERE pet_id = :id")
+    suspend fun getDogById(id: String): DogEntity
+
     @Query("SELECT * FROM dogs_in_adoption WHERE pet_breed = :breed")
     suspend fun getDogsByBreed(breed: String): List<DogEntity>
 

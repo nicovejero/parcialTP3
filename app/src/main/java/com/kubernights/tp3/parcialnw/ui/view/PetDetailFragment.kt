@@ -1,33 +1,109 @@
 package com.kubernights.tp3.parcialnw.ui.view
 
-import androidx.lifecycle.ViewModelProvider
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import com.kubernights.tp3.parcialnw.R
+import com.kubernights.tp3.parcialnw.data.model.DogModel
+import com.kubernights.tp3.parcialnw.databinding.FragmentPetDetailBinding
 import com.kubernights.tp3.parcialnw.ui.viewmodel.PetDetailViewModel
+import com.kubernights.tp3.parcialnw.ui.adapter.ImageAdapter
 
 class PetDetailFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = PetDetailFragment()
-    }
-
-    private lateinit var viewModel: PetDetailViewModel
+    private val args: PetDetailFragmentArgs by navArgs()
+    private lateinit var binding: FragmentPetDetailBinding
+    private val viewModel: PetDetailViewModel by viewModels()
+    private val pet: DogModel by lazy { args.pet }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_pet_detail, container, false)
+    ): View {
+        binding = FragmentPetDetailBinding.inflate(inflater, container, false)
+        setupUI()
+
+        // After setting up the UI with petModel, immediately fetch image URLs
+        viewModel.getImageUrlsForPet(pet.toDomain())
+
+        // Observe LiveData for image URLs to update RecyclerView
+        viewModel.imageUrls.observe(viewLifecycleOwner) { imageUrls ->
+            imageUrls.toList().let {
+                //setupRecyclerView(it as ArrayList<String>)
+            }
+        }
+
+        // Observe ViewModel LiveData for operation status
+        viewModel.operationStatus.observe(viewLifecycleOwner) { status ->
+            when (status) {
+                is PetDetailViewModel.OperationStatus.Success -> {
+                    Toast.makeText(context, "Adoption successful!", Toast.LENGTH_SHORT).show()
+
+                }
+
+                is PetDetailViewModel.OperationStatus.Failure -> {
+                    Toast.makeText(context, "Error: ${status.message}", Toast.LENGTH_SHORT).show()
+                }
+
+                else -> {}
+            }
+        }
+
+        return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(PetDetailViewModel::class.java)
-        // TODO: Use the ViewModel
-    }
+    private fun setupUI() {
+        // Setup UI elements with petModel data
+        binding.petDetailName.text = pet.petName
+        binding.petDetailWeight.text = pet.petWeight.toString()
+        binding.petDetailGender.text = pet.petGender
+        binding.petDetailAge.text = pet.petAge.toString()
+        binding.petDetailOwnerName.text = pet.petName
+        binding.petDetailLocation.text = pet.petLocation
+        binding.PetDetailDescripcion.text = pet.petDescripcion
 
+        binding.petDetailCallButton.setOnClickListener {
+            //initiateCall(petModel.contactNumber)
+            initiateCall("123456789")
+        }
+
+        binding.adoptButton.setOnClickListener {
+            viewModel.petAdoption(pet)
+            val action = PetDetailFragmentDirections.actionGlobalToAdopcionFragment()
+            findNavController().popBackStack(R.id.nav_graph, false)
+            findNavController().navigate(action)
+        } ?: Toast.makeText(requireContext(), "You must be logged in to adopt a pet", Toast.LENGTH_SHORT).show()
+    }
+        // Consider placing the following button click listeners here if not already defined
+/*
+    private fun setupRecyclerView(imageUrls: ArrayList<String>) {
+        // Assuming ImageAdapter is the adapter for RecyclerView
+        val adapter = ImageAdapter(requireContext(), imageUrls)
+        val recyclerView: RecyclerView = binding.petDetailPicture
+        recyclerView.adapter = adapter
+
+        adapter.setOnItemClickListener(object : ImageAdapter.OnItemClickListener {
+            override fun onClick(imageView: ImageView, path: String) {
+                // The same code as before for click event
+            }
+        })
+    }
+*/
+    private fun initiateCall(phoneNumber: String) {
+        val intent = Intent(Intent.ACTION_DIAL).apply {
+            data = Uri.parse("tel:$phoneNumber")
+        }
+        startActivity(intent)
+    }
 }

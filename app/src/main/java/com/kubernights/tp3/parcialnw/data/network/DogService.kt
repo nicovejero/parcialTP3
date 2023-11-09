@@ -5,36 +5,28 @@ import android.widget.Toast
 import com.google.firebase.firestore.FirebaseFirestore
 import com.kubernights.tp3.parcialnw.data.model.DogModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class DogService @Inject constructor(
     private val firestore: FirebaseFirestore
 ) {
-/*
-    suspend fun getBreeds(): BreedsApiResponse {
-        return withContext(Dispatchers.IO) {
-            val response = apiClient.getAllBreeds()
-            response.body() ?: throw Exception("Failed to fetch breeds data")
-        }
-    }
-*/
 
     suspend fun getAllDogs(): List<DogModel> = withContext(Dispatchers.IO) {
-        val dogs = mutableListOf<DogModel>()
-        firestore.collection("pets")
-            .get()
-            .addOnSuccessListener { result ->
-                for (document in result) {
-                    Log.d("Firestore", "${document.id} => ${document.data}")
-                    val dog = document.toObject(DogModel::class.java)
-                    dogs.add(dog)
-                }
+        try {
+            val result = firestore.collection("pets").get().await()
+            val dogs = mutableListOf<DogModel>()
+            for (document in result) {
+                Log.d("Firestore", "${document.id} => ${document.data}")
+                val dog = document.toObject(DogModel::class.java)
+                dogs.add(dog)
             }
-            .addOnFailureListener { exception ->
-                Log.w("Firestore", "Error getting documents.", exception)
-            }
-        dogs
+            dogs
+        } catch (e: Exception) {
+            Log.w("Firestore", "Error getting documents.", e)
+            emptyList() // Return an empty list in case of error
+        }
     }
 
     suspend fun addDogToFirestore(petModel: DogModel, userId: String?) = withContext(Dispatchers.IO) {

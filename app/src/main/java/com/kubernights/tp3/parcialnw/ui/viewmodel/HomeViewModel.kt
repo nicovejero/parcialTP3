@@ -37,7 +37,7 @@ class HomeViewModel @Inject constructor(
             isLoading.postValue(true)
             val result = getAllDogsUseCase()
             if (!result.isNullOrEmpty()) {
-                dogModel.postValue(result)
+                dogModel.map { it }
                 isLoading.postValue(false)
             }
         }

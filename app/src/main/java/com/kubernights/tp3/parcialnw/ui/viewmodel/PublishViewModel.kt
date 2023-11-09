@@ -98,11 +98,12 @@ class PublishViewModel @Inject constructor(
         petSubBreed: String,
         petLocation: String,
         petAge: String,
+        petWeight: Double,
         petGender: String,
         petDescription: String,
         onResult: (Boolean) -> Unit
     ) {
-        val dogModel = generatePetInfo(petName, petBreed, petSubBreed, petLocation, petAge, petGender, petDescription)
+        val dogModel = generatePetInfo(petName, petBreed, petSubBreed, petLocation, petAge, petWeight, petGender, petDescription)
         if (dogModel != null) {
             val dog = Dog(
                 id = dogModel.petId,
@@ -113,6 +114,7 @@ class PublishViewModel @Inject constructor(
                 petLocation = dogModel.petLocation,
                 petAge = dogModel.petAge,
                 petGender = dogModel.petGender,
+                petWeight = dogModel.petWeight,
                 petIsAdopted = dogModel.petAdopted,
                 imageUrls = dogModel.urlImage,
                 creationDate = dogModel.creationTimestamp,
@@ -137,6 +139,7 @@ class PublishViewModel @Inject constructor(
         petSubBreed: String,
         petLocation: String,
         petAge: String,
+        petWeight: Double,
         petGender: String,
         petDescription: String
     ): DogModel? {
@@ -146,7 +149,7 @@ class PublishViewModel @Inject constructor(
             "https://inspirationseek.com/wp-content/uploads/2016/02/Cute-Dog-Images.jpg"
         )
         val parsedPetAge = petAge.toIntOrNull() ?: return null
-        val petWeight = 0.0 // Or retrieve from input if necessary
+        val parsedPetWeight = petWeight.toString() // Or retrieve from input if necessary
 
         // Validate the input data and return null if any of the required fields are missing
         if (petName.isEmpty() || petBreed.isEmpty()) return null

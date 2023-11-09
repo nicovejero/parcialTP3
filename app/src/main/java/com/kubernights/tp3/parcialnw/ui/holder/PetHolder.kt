@@ -1,5 +1,7 @@
 package com.kubernights.tp3.parcialnw.ui.holder
 
+import android.util.Log
+import android.widget.Toast
 import android.widget.ToggleButton
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -10,25 +12,16 @@ class PetHolder(private val binding: ItemFragmentMascotaBinding) : RecyclerView.
 
     val toggleButton: ToggleButton = binding.toggleBookmark
 
-    fun setCard(petName: String, petAge: Int, petGender: Boolean, petImg: List<String>, petBreed: String, petSubBreed: String?) {
+    fun setCard(petName: String, petAge: Int, petGender: String, petImg: List<String>, petBreed: String, petSubBreed: String?) {
         binding.tvCardNombre.text = petName
         binding.tvCardEdad.text = petAge.toString()
-        binding.tvCardGenero.text = if (petGender) "Macho" else "Hembra"
+        binding.tvCardGenero.text = petGender
         binding.tvCardRaza.text = petBreed
         binding.tvCardSubRaza.text = petSubBreed ?: "" // Assuming petSubBreed can be null and you want to set an empty string in that case
 
         Glide.with(itemView)
-            .load(petImg)
+            .load(petImg[0])
             .into(binding.ivCardBackGround)
-    }
-
-    fun bind(petModel: DogModel) {
-        // ... Your binding logic ...
-
-        // Load image with Glide, set text fields, etc.
-        // Example:
-        binding.tvCardNombre.text = petModel.petName
-        // and so on for the rest of the pet's properties
     }
 
     fun getCardLayout() = binding.cardAdoption

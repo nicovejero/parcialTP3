@@ -1,21 +1,56 @@
 package com.kubernights.tp3.parcialnw.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.kubernights.tp3.parcialnw.databinding.ItemFragmentMascotaBinding
 import com.kubernights.tp3.parcialnw.domain.model.Dog
+import com.kubernights.tp3.parcialnw.ui.holder.PetHolder
+import com.kubernights.tp3.parcialnw.ui.view.HomeFragmentDirections
 
-class PetAdoptableAdapter(private var dogs: MutableList<Dog>) : RecyclerView.Adapter<PetAdoptableAdapter.ViewHolder>() {
+class PetAdoptableAdapter(private var dogs: MutableList<Dog>) : RecyclerView.Adapter<PetHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemFragmentMascotaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return ViewHolder(binding)
+    private var userBookmarks = mutableListOf<String>()
+
+    fun updateUserBookmarks(bookmarks: List<String>) {
+        userBookmarks.clear()
+        userBookmarks.addAll(bookmarks)
+        notifyDataSetChanged() // Refresh the RecyclerView with the new bookmarks
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetHolder {
+        val binding = ItemFragmentMascotaBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return PetHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: PetHolder, position: Int) {
         val dog = dogs[position]
-        holder.bind(dog)
+        holder.toggleButton.isChecked = userBookmarks.contains(dog.id)
+
+        holder.getCardLayout().setOnClickListener {
+            val position = holder.adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                val clickedPet = dogs[position]
+                Log.d("PetAdoptableFirestoreAdapter", "onBindViewHolder: " + clickedPet.petName)
+                Toast.makeText(it.context, "Pet name: ${clickedPet.petName}", Toast.LENGTH_SHORT).show()
+            // Handle navigation with the appropriate action, passing the necessary data
+                // val action = HomeFragmentDirections.actionGlobalToPetInAdoptionDetailFragment(clickedPet, userId)
+                // it.findNavController().navigate(action)
+            }
+        }
+
+        // Assuming the Dog domain model has all the properties needed for binding
+        holder.setCard(
+            petName = dog.petName,
+            petAge = dog.petAge,
+            petGender = dog.petGender,
+            petImg = dog.imageUrls,
+            petBreed = dog.petBreed,
+            petSubBreed = dog.petSubBreed
+        )
     }
 
     override fun getItemCount(): Int = dogs.size
@@ -24,15 +59,5 @@ class PetAdoptableAdapter(private var dogs: MutableList<Dog>) : RecyclerView.Ada
         this.dogs.clear()
         this.dogs.addAll(newData)
         notifyDataSetChanged() // This notifies the adapter to refresh the view
-    }
-
-    class ViewHolder(private val binding: ItemFragmentMascotaBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(dog: Dog) {
-            binding.tvCardNombre.text = dog.petName
-            binding.tvCardRaza.text = dog.petBreed
-            binding.tvCardSubRaza.text = dog.petSubBreed
-            binding.tvCardEdad.text = dog.petAge.toString()
-            binding.tvCardGenero.text = dog.petGender.toString()
-        }
     }
 }
