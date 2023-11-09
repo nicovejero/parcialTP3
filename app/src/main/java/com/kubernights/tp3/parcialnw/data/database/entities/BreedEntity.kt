@@ -8,14 +8,14 @@ import androidx.room.Relation
 
 @Entity(tableName = "breeds")
 data class BreedEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "breedName") val breedName: String,
 )
 
 @Entity(tableName = "subbreeds")
 data class SubBreedEntity(
-    @PrimaryKey(autoGenerate = true) val subBreedId: Int = 0,
-    @ColumnInfo(name = "parentBreedId") val parentBreedId: Int,
+    @PrimaryKey(autoGenerate = true) val subBreedId: Long = 0,
+    @ColumnInfo(name = "parentBreedId") val parentBreedId: Long,
     @ColumnInfo(name = "subBreedName") val subBreedName: String
 )
 

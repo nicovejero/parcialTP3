@@ -73,6 +73,7 @@
             app:counterEnabled="true"
             app:counterMaxLength="@integer/ETNombrePetLength"
             app:helperText="@string/Required"
+
             app:helperTextTextColor="@color/design_default_color_primary_dark">
 
             <com.google.android.material.textfield.TextInputEditText
@@ -126,20 +127,23 @@
                     android:inputType="none" />
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
-        <!-- Breed Dropdown Menu -->
+        <!-- Breed Dropdown Menu breedDropdownContainer  breedAutoComplete-->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/breedDropdownContainer"
             style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:hint="@string/publishFr_choose_breed">
+            app:helperText="@string/Required"
+            app:helperTextTextColor="@color/design_default_color_primary_dark">
 
             <AutoCompleteTextView
                 android:id="@+id/breedAutoComplete"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:hint="@string/publishFr_pet_breed"
+                android:inputType="none"
+                android:editable="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Sub-Breed Dropdown Menu -->

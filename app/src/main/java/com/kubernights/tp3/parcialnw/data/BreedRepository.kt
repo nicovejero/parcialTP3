@@ -12,21 +12,29 @@ class BreedRepository @Inject constructor(
     private val breedDao: BreedDao,
     private val remote: BreedService
 ) {
-    /*suspend fun parseAndInsertBreedData(response: BreedsApiResponse, breedDao: BreedDao) {
+    suspend fun refreshBreeds() {
+        val response = remote.getBreeds()
+        insertBreedsIntoDatabase(response)
+    }
+
+    private suspend fun insertBreedsIntoDatabase(response: BreedsApiResponse) {
         response.message.forEach { (breedName, subBreeds) ->
             val breedEntity = BreedEntity(breedName = breedName)
             val breedId = breedDao.insertBreed(breedEntity)
 
             val subBreedEntities = subBreeds.map { subBreedName ->
-                SubBreedEntity(subBreedId = breedId.toInt(), subBreedName = subBreedName)
+                SubBreedEntity(subBreedName = subBreedName, parentBreedId = breedId)
             }
             breedDao.insertSubBreeds(subBreedEntities)
         }
     }
-*/
-    suspend fun getAllBreedsWithSubBreeds(): List<BreedWithSubBreeds> {
-        // This might interact with the database or make a network call
-        return breedDao.getAllBreedsWithSubBreeds()
+
+    suspend fun getSubBreedByParentId(breedId: Long): List<SubBreedEntity> {
+        return breedDao.getSubBreedByParentId(breedId)
     }
 
+    suspend fun getAllBreedsWithSubBreeds(): List<BreedWithSubBreeds> {
+             refreshBreeds()
+        return breedDao.getAllBreedsWithSubBreeds()
+    }
 }

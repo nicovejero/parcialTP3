@@ -3,9 +3,7 @@ package com.kubernights.tp3.parcialnw.ui.view
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,17 +11,17 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.google.firebase.firestore.FirebaseFirestore
+import com.kubernights.tp3.parcialnw.R
+import com.kubernights.tp3.parcialnw.data.database.entities.BreedWithSubBreeds
+import com.kubernights.tp3.parcialnw.data.database.entities.SubBreedEntity
 import com.kubernights.tp3.parcialnw.ui.viewmodel.PublishViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import com.kubernights.tp3.parcialnw.data.model.DogModel
 import com.kubernights.tp3.parcialnw.databinding.FragmentPublishBinding
-import com.kubernights.tp3.parcialnw.domain.model.Dog
-import kotlinx.coroutines.launch
-
 
 @AndroidEntryPoint
 class PublishFragment : Fragment() {
@@ -31,7 +29,9 @@ class PublishFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: PublishViewModel by viewModels()
     private var selectedImageViewId: Int = 0
-    private val db = FirebaseFirestore.getInstance()
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+        uri?.let { handleImagePicked(it) }
+    }
 
     companion object {
         fun newInstance() = PublishFragment()
@@ -45,7 +45,14 @@ class PublishFragment : Fragment() {
     ): View {
         _binding = FragmentPublishBinding.inflate(inflater, container, false)
         setupImageButtons()
+        setupConfirmAdoptionButton()
         return binding.root
+    }
+
+    private fun setupConfirmAdoptionButton() {
+        binding.confirmAdoptionButton.setOnClickListener {
+            attemptToGeneratePetInfo()
+        }
     }
 
     private fun setupImageButtons() {
@@ -56,41 +63,23 @@ class PublishFragment : Fragment() {
             binding.simpleImageButton4,
             binding.simpleImageButton5
         ).forEach { button ->
-            button.setOnClickListener { startImagePicker(it.id) }
-        }
-    }
-
-    private fun startImagePicker(imageViewId: Int) {
-        selectedImageViewId = imageViewId
-        Intent(Intent.ACTION_GET_CONTENT).also {
-            it.type = "image/*"
-            startActivityForResult(it, PICK_IMAGE_REQUEST)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
-            data?.data?.let { uri ->
-                binding.run {
-                    val imageView = when (selectedImageViewId) {
-                        simpleImageButton1.id -> simpleImageButton1
-                        simpleImageButton2.id -> simpleImageButton2
-                        simpleImageButton3.id -> simpleImageButton3
-                        simpleImageButton4.id -> simpleImageButton4
-                        simpleImageButton5.id -> simpleImageButton5
-                        else -> null
-                    }
-                    imageView?.let { Glide.with(this@PublishFragment).load(uri).into(it) }
-                }
+            button.setOnClickListener {
+                selectedImageViewId = it.id
+                imagePickerLauncher.launch("image/*")
             }
         }
     }
 
-    private fun guardarImagen(uri: Uri) {
-        view?.findViewById<ImageView>(selectedImageViewId)?.let { imageView ->
-            Glide.with(this).load(uri).circleCrop().into(imageView)
+    private fun handleImagePicked(uri: Uri) {
+        val imageView = when (selectedImageViewId) {
+            binding.simpleImageButton1.id -> binding.simpleImageButton1
+            binding.simpleImageButton2.id -> binding.simpleImageButton2
+            binding.simpleImageButton3.id -> binding.simpleImageButton3
+            binding.simpleImageButton4.id -> binding.simpleImageButton4
+            binding.simpleImageButton5.id -> binding.simpleImageButton5
+            else -> null
         }
+        imageView?.let { Glide.with(this).load(uri).into(it) }
     }
 
     private fun resetFields() {
@@ -117,11 +106,12 @@ class PublishFragment : Fragment() {
         with(viewModel) {
             //loadBreeds()
             setupObservers()
-            initializeAdapters()
-            handleGenderSwitch()
-            setupButtonListeners()
+            initializeAdapters(requireContext(), binding.breedAutoComplete, binding.subBreedAutoComplete, binding.locationsSpinner, binding.ageSpinner)
+            handleGenderSwitch(binding.genderSwitch, requireContext())
+            setupButtonListeners(binding.confirmAdoptionButton, requireContext(), lifecycleScope)
         }
     }
+
 
     private fun setupObservers() {
         viewModel.resetFields.observe(viewLifecycleOwner) { shouldReset ->
@@ -131,142 +121,88 @@ class PublishFragment : Fragment() {
             }
         }
 
-    // Observe breeds LiveData
-        /*viewModel.breedsLiveData.observe(viewLifecycleOwner) { breedsList ->
-            updateBreedsList(breedsList)
+        viewModel.breedsLiveData.observe(viewLifecycleOwner) { breedsWithSubBreeds ->
+            updateBreedsList(breedsWithSubBreeds)
+            setupBreedSelectionListener()
         }
 
-        // Observe error LiveData
-        viewModel.error.observe(viewLifecycleOwner) { errorMessage ->
-            errorMessage?.let {
-                // Handle the error message
-            }
-        }
-
-        // Observe resetFields LiveData
-
-
-        // Observe subBreedsLiveData LiveData
         viewModel.subBreedsLiveData.observe(viewLifecycleOwner) { subBreedsList ->
             updateSubBreedsList(subBreedsList)
-        }*/
-    }
-
-    private fun PublishViewModel.initializeAdapters() {
-        val context = requireContext()
-        binding.breedAutoComplete.setAdapter(
-            ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line)
-        )
-        binding.subBreedAutoComplete.setAdapter(
-            ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line)
-        )
-        val ages = (1..20).toList() // Replace with your age range
-        val locations = listOf(
-            "CABA",
-            "GBA",
-            "Cordoba",
-            "Rosario",
-            "Mendoza",
-            "Salta",
-            "Tucuman",
-            "Neuquen",
-            "Mar del Plata",
-            "La Plata",
-            "Santa Fe",
-            "San Juan",
-            "San Luis",
-            "Entre Rios",
-            "Corrientes",
-            "Misiones",
-            "Chaco",
-            "Formosa",
-            "Jujuy",
-            "La Rioja",
-            "Santiago del Estero",
-            "Catamarca",
-            "Chubut",
-            "Tierra del Fuego",
-            "Santa Cruz"
-        ).toList()
-        val ageAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            ages.map { it.toString() })
-        val locationsAdapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            locations.map { it.toString() })
-        binding.locationsSpinner.setAdapter(locationsAdapter)
-        binding.ageSpinner.setAdapter(ageAdapter)
-    }
-
-    private fun PublishViewModel.handleGenderSwitch() {
-        binding.genderSwitch.setOnCheckedChangeListener { _, isChecked ->
-            val petGender = if (isChecked) "Macho" else "Hembra"
-            Toast.makeText(requireContext(), "Gender: $petGender", Toast.LENGTH_SHORT).show()
         }
+
     }
 
-    private fun PublishViewModel.setupButtonListeners() {
-        binding.confirmAdoptionButton.setOnClickListener {
-            generatePetInfo()?.let { petInfo -> val dog = Dog(
-                    id = petInfo.petId,
-                    ownerId = petInfo.petOwner,
-                    petName = petInfo.petName,
-                    petBreed = petInfo.petBreed,
-                    petSubBreed = petInfo.petSubBreed,
-                    petLocation = petInfo.petLocation,
-                    petAge = petInfo.petAge,
-                    petGender = petInfo.petGender,
-                    petIsAdopted = petInfo.petAdopted,
-                    imageUrls = petInfo.urlImage,
-                    creationDate = petInfo.creationTimestamp,
-                    description = petInfo.petDescripcion
-                )
-                Toast.makeText(context, "Publicacion creada", Toast.LENGTH_SHORT).show()
+    private fun setupBreedSelectionListener() {
+        binding.breedAutoComplete.setOnItemClickListener { adapterView, _, position, _ ->
+            val selectedBreedName = adapterView.getItemAtPosition(position) as String
+            // Now, find the BreedWithSubBreeds object from your data source using the selected breed name
+            val selectedBreedWithSubBreeds = viewModel.breedsLiveData.value?.find { it.breed.breedName == selectedBreedName }
 
-                lifecycleScope.launch {
-                    viewModel.addDog(dog)
-                }
-            } ?: run {
-                Toast.makeText(context, "Publicacion Fallida", Toast.LENGTH_SHORT).show()
+            // Once you have the BreedWithSubBreeds object, you can proceed to load the sub-breeds
+            selectedBreedWithSubBreeds?.let {
+                viewModel.loadSubBreedsForBreed(it.breed.id)
             }
         }
     }
 
+    private fun updateBreedsList(breedsWithSubBreeds: List<BreedWithSubBreeds>) {
+        // Extract the breed names from the list of BreedWithSubBreeds
+        val breedNames = breedsWithSubBreeds.map { it.breed.breedName }
 
-    private fun generatePetInfo(): DogModel? {
+        // Update the AutoCompleteTextView with the list of breeds
+        val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, breedNames)
+        binding.breedAutoComplete.setAdapter(adapter)
+
+        // Optional: If you want to handle sub-breeds as well, you can expand this function
+        // to update another AutoCompleteTextView for sub-breeds based on the selected breed.
+    }
+
+    private fun updateSubBreedsList(subBreeds: List<SubBreedEntity>) {
+        if (subBreeds.isNotEmpty()) {
+            val subBreedsName = subBreeds.map { it.subBreedName }
+            val subBreedAdapter = ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, subBreedsName)
+            binding.subBreedAutoComplete.apply {
+                setAdapter(subBreedAdapter)
+                visibility = View.VISIBLE
+            }
+        } else {
+            // Hide the subBreedAutoComplete if there are no sub-breeds
+            binding.subBreedAutoComplete.visibility = View.GONE
+        }
+    }
+
+    private fun setupBreedAutoComplete(breeds: List<String>) {
+        val adapter = ArrayAdapter(requireContext(), R.layout.dropdown_menu_popup_item, breeds)
+        binding.breedAutoComplete.setAdapter(adapter)
+        binding.breedAutoComplete.setOnItemClickListener { parent, view, position, id ->
+            // Handle the selection event if necessary
+        }
+    }
+
+    private fun attemptToGeneratePetInfo() {
         val petName = binding.eTNombrePet.text.toString().trim()
         val petBreed = binding.breedAutoComplete.text.toString().trim()
         val petSubBreed = binding.subBreedAutoComplete.text.toString().trim()
         val petLocation = binding.locationsSpinner.text.toString().trim()
-        // Assuming you want to get URLs of images uploaded by the user, you would have a different mechanism to retrieve them
-        val urlImages = listOf(
-            "https://www.insidedogsworld.com/wp-content/uploads/2016/03/Dog-Pictures.jpg",
-            "https://inspirationseek.com/wp-content/uploads/2016/02/Cute-Dog-Images.jpg"
-        )
-        val petAge = binding.ageSpinner.text.toString().toIntOrNull() ?: return null
-        val petWeight = 0.0 //binding.pesoDropdownContainer.text.toString().toDoubleOrNull() ?: return null
+        val petAge = binding.ageSpinner.text.toString().trim() // Make sure to pass this as a string
         val petGender = binding.genderSwitch.isChecked
-        val petDescripcion = binding.publicacionDescriptionInput.text.toString()
-        // Validate the input data and return null if any of the required fields are missing
-        //if (petName.isEmpty() || petBreed.isEmpty()) return null
+        val petDescription = binding.publicacionDescriptionInput.text.toString()
 
-        return DogModel(
-            petId = "0",
-            petName = petName,
-            petBreed = petBreed,
-            petSubBreed = petSubBreed,
-            urlImage = urlImages,
-            petAge = petAge,
-            petWeight = petWeight,
-            petGender = petGender,
-            petOwner = "0",
-            petLocation = petLocation,
-            petAdopted = false,
-            creationTimestamp = System.currentTimeMillis(),
-            petDescripcion = petDescripcion
-        )
+        viewModel.createDog(
+            petName,
+            petBreed,
+            petSubBreed,
+            petLocation,
+            petAge,
+            petGender,
+            petDescription
+        ) { isSuccess ->
+            if (isSuccess) {
+                Toast.makeText(requireContext(), "Publicacion creada", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "Publicacion Fallida", Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -274,3 +210,4 @@ class PublishFragment : Fragment() {
         _binding = null
     }
 }
+

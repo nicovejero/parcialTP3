@@ -25,5 +25,7 @@ interface BreedDao {
     @Query("SELECT * FROM breeds")
     suspend fun getAllBreedsWithSubBreeds(): List<BreedWithSubBreeds>
 
-    // Additional methods as needed for your functionality
+    @Transaction
+    @Query("SELECT * FROM subbreeds WHERE parentBreedId = :breedId")
+    suspend fun getSubBreedByParentId(breedId: Long): List<SubBreedEntity>
 }
