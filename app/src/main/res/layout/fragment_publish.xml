@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="10dp"
+    android:scrollbars="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/fragment_container_publicacion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
+
+        <!-- NombrePet Menu -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="40dp">
+
+
+            <ImageView
+                android:id="@+id/simpleImageButton1"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginLeft="43dp"
+                android:background="@drawable/upload_image_icon"
+                android:clickable="true"/>
+            <ImageView
+                android:id="@+id/simpleImageButton2"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@drawable/upload_image_icon"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/simpleImageButton3"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@drawable/upload_image_icon"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/simpleImageButton4"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@drawable/upload_image_icon"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/simpleImageButton5"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="60dp"
+                android:background="@drawable/upload_image_icon"
+                android:clickable="true" />
+
+
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/nombrePetContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            app:counterEnabled="true"
+            app:counterMaxLength="@integer/ETNombrePetLength"
+            app:helperText="@string/Required"
+            app:helperTextTextColor="@color/design_default_color_primary_dark">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/eTNombrePet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/publishFr_pet_name"
+                android:maxLength="@integer/ETNombrePetLength" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Gender Switch -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+
+            android:gravity="center"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:text="@string/publishFr_gender_female_label" />
+
+            <com.google.android.material.switchmaterial.SwitchMaterial
+                android:id="@+id/genderSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:textOff="@string/publishFr_gender_female"
+                android:textOn="@string/publishFr_gender_male" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="0dp"
+                android:text="@string/publishFr_gender_male_label" />
+
+            <!-- Age Dropdown Menu -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/locationDropdownContainer"
+                style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:hint="Ubicacion">
+                <AutoCompleteTextView
+                    android:id="@+id/locationsSpinner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="none" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+        <!-- Breed Dropdown Menu -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/breedDropdownContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/publishFr_choose_breed">
+
+            <AutoCompleteTextView
+                android:id="@+id/breedAutoComplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Sub-Breed Dropdown Menu -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/subBreedDropdownContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/publishFr_choose_subbreed">
+
+            <AutoCompleteTextView
+                android:id="@+id/subBreedAutoComplete"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Age Dropdown Menu -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ageDropdownContainer"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/publishFr_choose_age">
+
+            <AutoCompleteTextView
+                android:id="@+id/ageSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+        <!-- Weight Input -->
+        <EditText
+            android:id="@+id/pesoDropdownContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:hint="@string/publishFr_complete_peso"
+            android:inputType="numberDecimal"
+            android:textSize="@dimen/text_size_medium"
+            />
+
+        <!-- Phone Input -->
+        <EditText
+            android:id="@+id/publicacionPhoneInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="16dp"
+            android:inputType="phone"
+            android:hint="@string/publishFr_complete_phone"/>
+
+        <!-- Description Input -->
+        <EditText
+            android:id="@+id/publicacionDescriptionInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:layout_marginTop="16dp"
+            android:inputType="textMultiLine"
+            android:hint="@string/publishFr_complete_description"/>
+
+        <!-- Confirm Button -->
+        <Button
+            android:id="@+id/confirmAdoptionButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:text="@string/publishFr_confirmButton_text"
+            android:layout_marginBottom="56dp"/>
+
+    </LinearLayout>
+</ScrollView>

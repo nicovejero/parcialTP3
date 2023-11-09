@@ -1,0 +1,50 @@
+<resources>
+    <string name="app_name">Beta</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+    <string name="web_client_id">422367932084-9c3a9no2jjuue2t2ddl9qdl5gmropbgl.apps.googleusercontent.com</string>
+    <string name="breeds_api_base_url">https://dog.ceo/</string>
+    <string name="api_key">nXvVwa3BwGjnmv9mu1AX4A==pVOAYana8Af00B5v</string>
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+
+    <!-- Menu Drawer -->
+    <string name="navigation_drawer_open">Abrir Menú</string>
+    <string name="navigation_drawer_close">Cerrar Menú</string>
+    <string name="inicio_login_button_text">Get Started</string>
+
+
+    <!-- Publicaciones -->
+    <string name="Required">Campo Requerido</string>
+    <string name="eTDireccion_hint" translatable="false">Dirección</string>
+    <string name="publishFr_pet_name">Nombre Pet</string>
+    <string name="publishFr_choose_breed">Seleccioná la Raza</string>
+    <string name="publishFr_complete_peso">Completá el Peso</string>
+    <string name="publishFr_choose_subbreed">Seleccioná la sub raza</string>
+    <string name="publishFr_confirmButton_text">Poner en Adopción</string>
+    <string name="publishFr_complete_phone">Completá teléfono de contacto</string>
+    <string name="dogs_api_base_url">https://dog.ceo/</string>
+    <string name="favoritos_text">Favoritos</string>
+    <string name="adopciones_text">Adopciones</string>
+    <string name="publishFr_gender_female">Hembra</string>
+    <string name="publishFr_gender_male">Macho</string>
+    <string name="publishFr_choose_age">Seleccioná la Edad</string>
+    <string name="publishFr_gender_male_label">Macho</string>
+    <string name="publishFr_gender_female_label">Hembra</string>
+    <string name="publishFr_owner_name">Nombre del Dueño</string>
+    <string name="filter_chip_text">Breed</string>
+    <string name="home_mas_filtros">Mas Filtros</string>
+    <string name="publishFr_choose_location">Seleccioná la ubicación</string>
+    <string name="publishFr_complete_description">Describí a la mascota amablemente para que tenga mas posibilidades de ser adoptada!</string>
+</resources>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/HomeFragment">
+    <action
+        android:id="@+id/action_global_nav_drawer_perfil"
+        app:destination="@id/nav_drawer_perfil"
+        app:launchSingleTop="true" />
+
+    <action
+        android:id="@+id/action_global_nav_drawer_configuracion"
+        app:destination="@id/nav_drawer_configuracion"
+        app:launchSingleTop="true" />
+
+    <action
+        android:id="@+id/action_global_to_adopcionFragment"
+        app:destination="@id/adopcion_fragment" />
+
+    <action
+        android:id="@+id/action_global_to_PetInAdoptionDetailFragment"
+        app:destination="@id/petInAdoptionDetailFragment" />
+    <!-- Fragmentos para Drawer Menu -->
+    <fragment
+        android:id="@+id/nav_drawer_perfil"
+        android:name="com.kubernights.tp3.parcialnw.ui.view.ProfileFragment" />
+
+    <fragment
+        android:id="@+id/nav_drawer_configuracion"
+        android:name="com.kubernights.tp3.parcialnw.ui.view.SettingsFragment" />
+
+    <!-- Fragmentos para Bottom Navigation Menu -->
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.kubernights.tp3.parcialnw.ui.view.HomeFragment"
+        android:label="Home" >
+    </fragment>
+    <fragment
+        android:id="@+id/favoritos_fragment"
+        android:name="com.kubernights.tp3.parcialnw.ui.view.FavoritesFragment"
+        android:label="Favoritos" >
+    </fragment>
+    <fragment
+        android:id="@+id/adopcion_fragment"
+        android:name="com.kubernights.tp3.parcialnw.ui.view.AdoptionFragment"
+        android:label="Adopción" />
+    <fragment
+        android:id="@+id/publicacion_fragment"
+        android:name="com.kubernights.tp3.parcialnw.ui.view.PublishFragment"
+        android:label="Publicación" />
+    <fragment
+        android:id="@+id/petInAdoptionDetailFragment"
+        android:name="com.kubernights.tp3.parcialnw.ui.view.PetDetailFragment"
+        android:label="Detalle"
+        tools:layout="@layout/fragment_pet_detail">
+        <argument android:name="pet"
+            app:argType="com.kubernights.tp3.parcialnw.data.model.DogModel"/>
+        <argument
+            android:name="user"
+            app:argType="string" />
+    </fragment>
+
+</navigation>
