@@ -9,7 +9,7 @@ class GetAllDogsUseCase @Inject constructor(private val repository: DogRepositor
 }
 
 class AddDogUseCase @Inject constructor(private val repository: DogRepository) {
-    suspend operator fun invoke(dog: Dog) = repository.addDog(dog)
+    suspend operator fun invoke(dog: Dog) = repository.addDogToFirestore(dog)
 }
 
 class GetDogsByBreedUseCase @Inject constructor(private val repository: DogRepository) {

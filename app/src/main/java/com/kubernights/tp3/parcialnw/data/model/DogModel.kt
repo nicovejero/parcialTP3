@@ -11,7 +11,7 @@ data class DogModel(
     val urlImage: List<String> = emptyList(),
     val petAge: Int = 0,
     val petWeight: Double = 0.0,
-    val petGender: String = "",
+    val petGender: Boolean = false,
     var petOwner: String = "",
     var petLocation: String = "",
     val petAdopted: Boolean = false,
@@ -26,7 +26,7 @@ data class DogModel(
         mutableListOf<String>().apply { parcel.readStringList(this) },
         parcel.readInt(),
         parcel.readDouble(),
-        parcel.readString() ?: "",
+        parcel.readByte() != 0.toByte(),
         parcel.readString() ?: "",
         parcel.readString() ?: "",
         parcel.readByte() != 0.toByte(),
@@ -42,7 +42,7 @@ data class DogModel(
         writeStringList(urlImage)
         writeInt(petAge)
         writeDouble(petWeight)
-        writeString(petGender)
+        writeByte(if (petGender) 1 else 0)
         writeString(petOwner)
         writeString(petLocation)
         writeByte(if (petAdopted) 1 else 0)

@@ -27,4 +27,8 @@ object RoomModule {
     @Singleton
     @Provides
     fun provideDogDao(db: DogDatabase) = db.getDogDao()
+
+    @Singleton
+    @Provides
+    fun provideBreedDao(db: DogDatabase) = db.getBreedDao()
 }

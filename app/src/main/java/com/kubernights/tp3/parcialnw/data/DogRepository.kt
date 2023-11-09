@@ -2,11 +2,16 @@ package com.kubernights.tp3.parcialnw.data
 
 import com.kubernights.tp3.parcialnw.data.database.dao.DogDao
 import com.kubernights.tp3.parcialnw.data.database.entities.DogEntity
+import com.kubernights.tp3.parcialnw.data.model.DogModel
+import com.kubernights.tp3.parcialnw.data.network.DogService
+import com.kubernights.tp3.parcialnw.domain.SessionManagerInterface
 import com.kubernights.tp3.parcialnw.domain.model.Dog
 import javax.inject.Inject
 
 class DogRepository @Inject constructor(
-    private val dogDao: DogDao
+    private val dogDao: DogDao,
+    private val remote: DogService,
+    private val sessionManager: SessionManagerInterface
 ) {
     suspend fun getAllDogs(): List<Dog> {
         return dogDao.getAllDogs().map { entity ->
@@ -26,7 +31,7 @@ class DogRepository @Inject constructor(
             )
         }
     }
-
+/*
     suspend fun addDog(dog: Dog) {
         dogDao.insertDog(
             DogEntity(
@@ -43,6 +48,33 @@ class DogRepository @Inject constructor(
                 creationDate = dog.creationDate,
                 description = dog.description
             )
+        )
+    }
+*/
+    suspend fun addDogToFirestore(dog: Dog) {
+        val userId = sessionManager.currentUserId
+
+
+        val dogModel = dog.toDataModel()
+
+        // Now, call the remote service to add the dog to Firestore
+        remote.addDogToFirestore(dogModel, userId)
+    }
+
+    private fun Dog.toDataModel(): DogModel {
+        return DogModel(
+            petId = this.id,
+            petOwner = this.ownerId,
+            petName = this.petName,
+            petBreed = this.petBreed,
+            petSubBreed = this.petSubBreed,
+            petLocation = this.petLocation,
+            petAge = this.petAge,
+            petGender = this.petGender,
+            petAdopted = this.petIsAdopted,
+            urlImage = this.imageUrls,
+            petDescripcion = this.description,
+            creationTimestamp = this.creationDate
         )
     }
 
