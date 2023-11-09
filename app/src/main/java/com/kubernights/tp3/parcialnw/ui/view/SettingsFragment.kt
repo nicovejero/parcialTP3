@@ -1,12 +1,79 @@
 package com.kubernights.tp3.parcialnw.ui.view
 
+import android.content.Context
 import android.os.Bundle
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.navigation.findNavController
+import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
+import com.kubernights.tp3.parcialnw.MainActivity
 import com.kubernights.tp3.parcialnw.R
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val activity = requireActivity() as AppCompatActivity
+        activity.supportActionBar?.hide()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val activity = requireActivity() as AppCompatActivity
+        activity.supportActionBar?.show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        val activity = requireActivity() as AppCompatActivity
+        activity.supportActionBar?.show()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        val activity = requireActivity() as AppCompatActivity
+        activity.supportActionBar?.show()
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val navController = view.findNavController()
+
+        val goBackButton = findPreference<Preference>("back_key")
+        goBackButton?.onPreferenceClickListener = Preference.OnPreferenceClickListener {
+            navController.popBackStack(R.id.nav_graph, false)
+
+            if (activity is MainActivity) {
+                (activity as MainActivity).setBottomNavViewVisibility(View.VISIBLE)
+            }
+
+            navController.navigateUp()
+            true
+        }
+
+        val toggleNightMode = findPreference<SwitchPreferenceCompat>("dark_mode")
+        toggleNightMode?.setOnPreferenceChangeListener { _, newValue ->
+            val nightMode = if (newValue as Boolean) {
+                AppCompatDelegate.MODE_NIGHT_YES
+            } else {
+                AppCompatDelegate.MODE_NIGHT_NO
+            }
+            AppCompatDelegate.setDefaultNightMode(nightMode)
+
+            // Save the night mode preference
+            val sharedPreferences = requireActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putBoolean("night_mode", newValue)
+            editor.apply()
+
+            true
+        }
     }
 }
