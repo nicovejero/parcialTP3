@@ -1,9 +1,7 @@
 package com.kubernights.tp3.parcialnw.ui.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.kubernights.tp3.parcialnw.databinding.ItemFragmentMascotaBinding
@@ -18,7 +16,7 @@ class PetAdoptableAdapter(private var dogs: MutableList<Dog>) : RecyclerView.Ada
     fun updateUserBookmarks(bookmarks: List<String>) {
         userBookmarks.clear()
         userBookmarks.addAll(bookmarks)
-        notifyDataSetChanged() // Refresh the RecyclerView with the new bookmarks
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetHolder {
@@ -34,15 +32,11 @@ class PetAdoptableAdapter(private var dogs: MutableList<Dog>) : RecyclerView.Ada
             val position = holder.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 val clickedPet = dogs[position]
-                Log.d("PetAdoptableFirestoreAdapter", "onBindViewHolder: " + clickedPet.petName)
-                Toast.makeText(it.context, "Pet name: ${clickedPet.petName}", Toast.LENGTH_SHORT).show()
-            // Handle navigation with the appropriate action, passing the necessary data
-                // val action = HomeFragmentDirections.actionGlobalToPetInAdoptionDetailFragment(clickedPet, userId)
-                // it.findNavController().navigate(action)
+                val action = HomeFragmentDirections.actionGlobalToPetDetailFragment(clickedPet)
+                it.findNavController().navigate(action)
             }
         }
 
-        // Assuming the Dog domain model has all the properties needed for binding
         holder.setCard(
             petName = dog.petName,
             petAge = dog.petAge,
@@ -58,6 +52,6 @@ class PetAdoptableAdapter(private var dogs: MutableList<Dog>) : RecyclerView.Ada
     fun updateData(newData: List<Dog>) {
         this.dogs.clear()
         this.dogs.addAll(newData)
-        notifyDataSetChanged() // This notifies the adapter to refresh the view
+        notifyDataSetChanged()
     }
 }

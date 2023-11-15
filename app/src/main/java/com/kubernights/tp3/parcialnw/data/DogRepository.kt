@@ -34,7 +34,6 @@ class DogRepository @Inject constructor(
         return response
     }
 
-
     suspend fun getDogs(): List<Dog> {
         return try {
             val firebaseDogs = getAllDogsFromFirebase()

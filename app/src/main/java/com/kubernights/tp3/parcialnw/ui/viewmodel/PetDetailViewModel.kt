@@ -46,11 +46,11 @@ class PetDetailViewModel @Inject constructor(
         }
     }
 
-    fun petAdoption(petModel: DogModel) {
+    fun petAdoption(dog: Dog) {
         viewModelScope.launch {
             try {
                 // Execute the use case for user adopting the pet
-                adoptPet(petModel.toDomain())
+                adoptPet(dog)
                 _operationStatus.postValue(OperationStatus.Success)
             } catch (e: Exception) {
                 // Handle exceptions from the use case and update UI

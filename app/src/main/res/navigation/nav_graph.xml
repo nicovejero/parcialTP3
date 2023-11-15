@@ -19,7 +19,7 @@
         app:destination="@id/adopcion_fragment" />
 
     <action
-        android:id="@+id/action_global_to_PetInAdoptionDetailFragment"
+        android:id="@+id/action_global_to_PetDetailFragment"
         app:destination="@id/pet_detail_fragment" />
     <!-- Fragmentos para Drawer Menu -->
     <fragment
@@ -45,6 +45,7 @@
         android:id="@+id/adopcion_fragment"
         android:name="com.kubernights.tp3.parcialnw.ui.view.AdoptionFragment"
         android:label="Adopción" />
+
     <fragment
         android:id="@+id/publicacion_fragment"
         android:name="com.kubernights.tp3.parcialnw.ui.view.PublishFragment"
@@ -55,10 +56,7 @@
         android:label="Detalle"
         tools:layout="@layout/fragment_pet_detail">
         <argument android:name="pet"
-            app:argType="com.kubernights.tp3.parcialnw.data.model.DogModel"/>
-        <argument
-            android:name="user"
-            app:argType="string" />
+            app:argType="com.kubernights.tp3.parcialnw.domain.model.Dog"/>
     </fragment>
 
 </navigation>

@@ -15,17 +15,25 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.kubernights.tp3.parcialnw.R
+import com.kubernights.tp3.parcialnw.data.database.entities.toDatabase
 import com.kubernights.tp3.parcialnw.data.model.DogModel
 import com.kubernights.tp3.parcialnw.databinding.FragmentPetDetailBinding
+import com.kubernights.tp3.parcialnw.domain.model.Dog
+import com.kubernights.tp3.parcialnw.domain.model.toDomain
+import com.kubernights.tp3.parcialnw.domain.model.toModel
 import com.kubernights.tp3.parcialnw.ui.viewmodel.PetDetailViewModel
 import com.kubernights.tp3.parcialnw.ui.adapter.ImageAdapter
 
 class PetDetailFragment : Fragment() {
-
-    private val args: PetDetailFragmentArgs by navArgs()
-    private lateinit var binding: FragmentPetDetailBinding
     private val viewModel: PetDetailViewModel by viewModels()
-    private val pet: DogModel by lazy { args.pet }
+    private val args: PetDetailFragmentArgs by navArgs()
+    private val pet: Dog by lazy { args.pet }
+    private lateinit var binding: FragmentPetDetailBinding
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel.getImageUrlsForPet(pet)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,10 +41,6 @@ class PetDetailFragment : Fragment() {
     ): View {
         binding = FragmentPetDetailBinding.inflate(inflater, container, false)
         setupUI()
-
-        // After setting up the UI with petModel, immediately fetch image URLs
-        viewModel.getImageUrlsForPet(pet.toDomain())
-
         // Observe LiveData for image URLs to update RecyclerView
         viewModel.imageUrls.observe(viewLifecycleOwner) { imageUrls ->
             imageUrls.toList().let {
@@ -71,7 +75,7 @@ class PetDetailFragment : Fragment() {
         binding.petDetailAge.text = pet.petAge.toString()
         binding.petDetailOwnerName.text = pet.petName
         binding.petDetailLocation.text = pet.petLocation
-        binding.PetDetailDescripcion.text = pet.petDescripcion
+        binding.PetDetailDescripcion.text = pet.description
 
         binding.petDetailCallButton.setOnClickListener {
             //initiateCall(petModel.contactNumber)
